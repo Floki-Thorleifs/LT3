@@ -52,7 +52,7 @@ ifelse(lat <= skipting_lat & lon >= skipting_lon, "SA",
 ifelse(lat <= skipting_lat & lon <= skipting_lon, "SV","NV"))))
 
 BF$kt2 <- factor(BF$kt)
-levels(BF$kt2) <- c('Ókynþroska','Önnur stig','Önnur stig','Hryngdur','Önnur stig','Önnur stig')
+levels(BF$kt2) <- c('Ókynþroska','kynþroska','kynþroska','kynþroska','kynþroska','kynþroska')
 ```
 
 ##b)
@@ -71,6 +71,6 @@ ggplot(BF, aes(x=BF$hafsvaedi, fill=kt2)) + geom_bar(position = "dodge") + xlab(
 
 ##c)
 ```{r}
-table(BF$kt2, heild<-BF$osl.sum())
+table(BF$hafsvaedi, BF$kt2)
 ```
 
