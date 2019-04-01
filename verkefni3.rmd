@@ -1,0 +1,76 @@
+---
+title: "Verkefni3"
+author: "Flóki og Birnir"
+date: "April 1, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Dæmi 1
+
+##a)
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+
+```{r}
+r2d <-function(r)
+{
+    lat <- floor(r/100)
+    lon <- (r - lat * 100) %% 50
+    halfb <- (r - 100 * lat - lon)/100
+    lon <-  - (lon + 0.5)
+    lat <- lat + 60 + halfb + 0.25
+    data.frame(lat = lat, lon = lon)
+}
+BF<-read.csv("data98.csv", fill=TRUE)
+BF<-na.omit(BF)
+reitir<-unique(BF$reit)
+x<-r2d(reitir)$lon
+y<-r2d(reitir)$lat
+plot(x,y,type='n')
+text(x,y,as.character(reitir))
+
+```
+
+```{r, eval = T}
+BF$lon <- r2d(BF$reit)$lon
+BF$lat <- r2d(BF$reit)$lat
+
+skipting_lat = 65
+skipting_lon = -19
+
+BF$hafsvaedi <- with(BF, ifelse(lat >= skipting_lat & lon >= skipting_lon, "NA",
+
+ifelse(lat <= skipting_lat & lon >= skipting_lon, "SA",
+
+ifelse(lat <= skipting_lat & lon <= skipting_lon, "SV","NV"))))
+
+BF$kt2 <- factor(BF$kt)
+levels(BF$kt2) <- c('Ókynþroska','Önnur stig','Önnur stig','Hryngdur','Önnur stig','Önnur stig')
+```
+
+##b)
+
+```{r}
+table(BF$kt2, BF$hafsvaedi)
+```
+```{r}
+round(prop.table(table(BF$kt2, BF$hafsvaedi), 1),3)
+```
+
+```{r}
+ggplot(BF, aes(x=BF$hafsvaedi, fill=kt2)) + geom_bar(position = "dodge") + xlab("Hafsvæði")
+```
+
+
+##c)
+```{r}
+table(BF$kt2, heild<-BF$osl.sum())
+```
+
