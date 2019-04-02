@@ -15,6 +15,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(ggplot2)
 library(dplyr)
+library(tidyr)
+library(kableExtra)
+library(knitr)
 ```
 
 
@@ -35,6 +38,7 @@ x<-r2d(reitir)$lon
 y<-r2d(reitir)$lat
 plot(x,y,type='n')
 text(x,y,as.character(reitir))
+BF$aldur<-factor(BF$aldur)
 
 ```
 
@@ -58,10 +62,14 @@ levels(BF$kt2) <- c('Ókynþroska','kynþroska','kynþroska','kynþroska','kynþroska'
 ##b)
 
 ```{r}
-table(BF$kt2, BF$hafsvaedi)
+tafla<-table(BF$hafsvaedi, BF$kt2)
+kable(tafla) %>%
+  kable_styling(bootstrap_options = "striped", full_width = TRUE, position = "left", font_size = 16)
 ```
 ```{r}
-round(prop.table(table(BF$kt2, BF$hafsvaedi), 1),3)
+tafla_2<-round(prop.table(table(BF$hafsvaedi, BF$kt2), 1),3)
+kable(tafla_2) %>%
+  kable_styling(bootstrap_options = "striped", full_width = TRUE, position = "left", font_size = 16)
 ```
 
 ```{r}
@@ -71,6 +79,20 @@ ggplot(BF, aes(x=BF$hafsvaedi, fill=kt2)) + geom_bar(position = "dodge") + xlab(
 
 ##c)
 ```{r}
-table(BF$hafsvaedi, BF$kt2)
+tafla_c<-group_by(BF, aldur)%>%
+  summarise("Fjöldi"= length(aldur), "Meðallengd"=mean(le, na.rm=TRUE),"Meðalþyngd"=mean(osl, na.rm=TRUE), "Staðalfrávik lengdar"=sd(le, na.rm=TRUE))
+kable(tafla_c) %>%
+  kable_styling(bootstrap_options = "striped", full_width = TRUE, position = "left", font_size = 16)
 ```
 
+
+```{r}
+medal <- group_by(BF, aldur) %>% 
+  summarise(le = mean(le, na.rm = TRUE))
+
+ggplot(BF, aes(x=aldur, y=le)) +
+  geom_point(colour = "green") + xlab("Aldur sem samfelld breyta") + ylab("Lengd") +
+  geom_point(data = medal, size = 3.5, colour = "red")
+```
+
+ggplot(BF, aes(a))
